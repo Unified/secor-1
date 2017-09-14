@@ -43,4 +43,4 @@ VM Options
 -Dlog4j.configuration=log4j.dev.properties
 -Dconfig=unified/secor.unified.job_instance_id.properties
 ```
-![Image of IntelliJ Java Configuration](https://github.com/Unified/secor_pinterest/blob/feature/UIP-1087_csv_writer/secor_pinterest_idea.png?raw=true)
+![Image of IntelliJ Java Configuration](https://github.com/Unified/secor_pinterest/blob/master/secor_pinterest_idea.png?raw=true)
