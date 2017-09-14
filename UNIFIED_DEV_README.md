@@ -21,7 +21,7 @@ Install s3Cmd to be able to use a query the local fake s3 store
 s3cmd -c test.s3cfg ls s3://test-bucket/
 s3cmd -c test.s3cfg get s3://test-bucket/file.json
 ```
-The `test.s3cfg` file can be found after running the [Local secor development](secor-deploy) in `secor_deploy` 
+The `test.s3cfg` file can be found after running the [Local secor development](local-secor-deployment) in `secor_deploy` 
 
 ##### Copy over the Fake S3 overrides
 <aside class="notice">DO NOT COMMIT THIS FILE</aside>
@@ -31,7 +31,7 @@ This configuration is to point secor to the fake s3 host/port.
 cp src/test/config/jets3t.properties src/main/config
 ```
 
-##### Local secor development
+##### Local secor deployment
 ```sh
 ./unified_local_test_deploy.sh
 
