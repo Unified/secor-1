@@ -70,8 +70,8 @@ public class JsonTimestampPathParserTest extends TestCase {
         assertEquals("id=0", resultSeconds[1]);
         assertEquals("year=2014", resultSeconds[2]);
         assertEquals("month=07", resultSeconds[3]);
-        assertEquals("day=20", resultSeconds[4]);
-        assertEquals("hour=19", resultSeconds[5]);
+        assertEquals("day=21", resultSeconds[4]);
+        assertEquals("hour=02", resultSeconds[5]);
     }
 
     @Test
@@ -92,8 +92,8 @@ public class JsonTimestampPathParserTest extends TestCase {
         assertEquals("friends=Rebecca Hardy", resultSeconds[2]);
         assertEquals("year=2014", resultSeconds[3]);
         assertEquals("month=07", resultSeconds[4]);
-        assertEquals("day=20", resultSeconds[5]);
-        assertEquals("hour=19", resultSeconds[6]);
+        assertEquals("day=21", resultSeconds[5]);
+        assertEquals("hour=02", resultSeconds[6]);
     }
 
     @Test

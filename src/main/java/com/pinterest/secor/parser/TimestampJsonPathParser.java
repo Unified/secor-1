@@ -21,6 +21,7 @@ package com.pinterest.secor.parser;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +70,8 @@ public class TimestampJsonPathParser extends MessageParser {
                 recordTimestamp = toMillis(Double.valueOf(timestampValue.toString()).longValue());
             }
         }
-        DateTime dt = new DateTime(recordTimestamp);
+        //Need to make sure time is in UTC because our buckets are GMT time based
+        DateTime dt = new DateTime(recordTimestamp).toDateTime(DateTimeZone.UTC);
 
         String[] partitions = new String[mFieldPrefixToJsonPathMap.size() + 4];
         int i = 0;
