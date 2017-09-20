@@ -13,6 +13,16 @@ To run and test secor locally you need to install [fake-s3](https://github.com/j
 
 `gem install fakes3`
 
+##### Install s3Cmd
+Install s3Cmd to be able to use a query the local fake s3 store
+[s3Cmd](https://github.com/s3tools/s3cmd)
+
+```sh
+s3cmd -c test.s3cfg ls s3://test-bucket/
+s3cmd -c test.s3cfg get s3://test-bucket/file.json
+```
+The `test.s3cfg` file can be found after running the [Local secor development](local-secor-deployment) in `secor_deploy` 
+
 ##### Copy over the Fake S3 overrides
 <aside class="notice">DO NOT COMMIT THIS FILE</aside>
 
@@ -21,7 +31,7 @@ This configuration is to point secor to the fake s3 host/port.
 cp src/test/config/jets3t.properties src/main/config
 ```
 
-##### Make and Deploy a local development secor
+##### Local secor deployment
 ```sh
 ./unified_local_test_deploy.sh
 
@@ -43,4 +53,4 @@ VM Options
 -Dlog4j.configuration=log4j.dev.properties
 -Dconfig=unified/secor.unified.job_instance_id.properties
 ```
-![Image of IntelliJ Java Configuration](https://github.com/Unified/secor_pinterest/blob/feature/UIP-1087_csv_writer/secor_pinterest_idea.png?raw=true)
+![Image of IntelliJ Java Configuration](https://github.com/Unified/secor_pinterest/blob/master/secor_pinterest_idea.png?raw=true)
