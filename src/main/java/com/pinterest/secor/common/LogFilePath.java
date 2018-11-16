@@ -54,6 +54,8 @@ public class LogFilePath {
     private final long[] mOffsets;
     private final String mExtension;
     private MessageDigest messageDigest;
+    private static final String DEFAULT_TOPIC = "events";
+    private final boolean readFromMultipleTopics;
 
 
     public LogFilePath(String prefix, String topic, String[] partitions, int generation,
@@ -76,6 +78,7 @@ public class LogFilePath {
         mKafkaPartitions = Arrays.copyOf(kafkaPartitions, kafkaPartitions.length);
         mOffsets = Arrays.copyOf(offsets, offsets.length);
         mExtension = extension;
+        readFromMultipleTopics = Boolean.getBoolean("readFromMultipleTopics");
 
         try {
             messageDigest = MessageDigest.getInstance("MD5");
@@ -129,6 +132,7 @@ public class LogFilePath {
         mGeneration = Integer.parseInt(basenameElements[0]);
         mKafkaPartitions = new int[]{Integer.parseInt(basenameElements[1])};
         mOffsets = new long[]{Long.parseLong(basenameElements[2])};
+        readFromMultipleTopics = Boolean.getBoolean("readFromMultipleTopics");
     }
 
     private static String[] subArray(String[] array, int startIndex, int endIndex) {
@@ -149,9 +153,17 @@ public class LogFilePath {
         if (mPrefix != null && mPrefix.length() > 0) {
             elements.add(mPrefix);
         }
-        if (mTopic != null && mTopic.length() > 0) {
+
+        // Below is the original code - it adds the topic name in folder path.
+        // Removed it for UIP-4833 as messages will be written to multiple kafka topics per publisher.
+        // In our case, the messages should always be written to events folder irrespective of the actual topic for filecrusher to read the files properly.
+
+        /*if (mTopic != null && mTopic.length() > 0 ) {
             elements.add(mTopic);
-        }
+        }*/
+
+        elements.add(DEFAULT_TOPIC);
+
         return StringUtils.join(elements, "/");
     }
 
@@ -166,6 +178,11 @@ public class LogFilePath {
 
     private String getLogFileBasename() {
         ArrayList<String> basenameElements = new ArrayList<String>();
+
+        //When messages are read from multiple topics, all messages are written in events folder. Added topic name to file name to avoid files being overwritten
+        if (readFromMultipleTopics && mTopic.contains("events.")) {
+            basenameElements.add(mTopic);
+        }
         basenameElements.add(Integer.toString(mGeneration));
         if (mKafkaPartitions.length > 1) {
             String kafkaPartitions = mKafkaPartitions[0] + "-" +
