@@ -54,6 +54,8 @@ public class LogFilePath {
     private final long[] mOffsets;
     private final String mExtension;
     private MessageDigest messageDigest;
+    private static final String DEFAULT_TOPIC = "events";
+    private final boolean readFromMultipleTopics;
 
 
     public LogFilePath(String prefix, String topic, String[] partitions, int generation,
@@ -76,6 +78,7 @@ public class LogFilePath {
         mKafkaPartitions = Arrays.copyOf(kafkaPartitions, kafkaPartitions.length);
         mOffsets = Arrays.copyOf(offsets, offsets.length);
         mExtension = extension;
+        readFromMultipleTopics = Boolean.getBoolean("readFromMultipleTopics");
 
         try {
             messageDigest = MessageDigest.getInstance("MD5");
@@ -129,6 +132,7 @@ public class LogFilePath {
         mGeneration = Integer.parseInt(basenameElements[0]);
         mKafkaPartitions = new int[]{Integer.parseInt(basenameElements[1])};
         mOffsets = new long[]{Long.parseLong(basenameElements[2])};
+        readFromMultipleTopics = Boolean.getBoolean("readFromMultipleTopics");
     }
 
     private static String[] subArray(String[] array, int startIndex, int endIndex) {
@@ -149,8 +153,12 @@ public class LogFilePath {
         if (mPrefix != null && mPrefix.length() > 0) {
             elements.add(mPrefix);
         }
-        if (mTopic != null && mTopic.length() > 0) {
-            elements.add(mTopic);
+        if (readFromMultipleTopics) {
+            elements.add(DEFAULT_TOPIC);
+        } else {
+            if (mTopic != null && mTopic.length() > 0 ) {
+                elements.add(mTopic);
+            }
         }
         return StringUtils.join(elements, "/");
     }
@@ -166,6 +174,9 @@ public class LogFilePath {
 
     private String getLogFileBasename() {
         ArrayList<String> basenameElements = new ArrayList<String>();
+        if (readFromMultipleTopics) {
+            basenameElements.add(mTopic);
+        }
         basenameElements.add(Integer.toString(mGeneration));
         if (mKafkaPartitions.length > 1) {
             String kafkaPartitions = mKafkaPartitions[0] + "-" +
