@@ -180,7 +180,7 @@ public class LogFilePath {
         ArrayList<String> basenameElements = new ArrayList<String>();
 
         //When messages are read from multiple topics, all messages are written in events folder. Added topic name to file name to avoid files being overwritten
-        if (readFromMultipleTopics) {
+        if (readFromMultipleTopics && mTopic.contains("events.")) {
             basenameElements.add(mTopic);
         }
         basenameElements.add(Integer.toString(mGeneration));
