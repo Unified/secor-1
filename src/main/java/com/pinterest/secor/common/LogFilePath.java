@@ -153,13 +153,17 @@ public class LogFilePath {
         if (mPrefix != null && mPrefix.length() > 0) {
             elements.add(mPrefix);
         }
-        if (readFromMultipleTopics) {
-            elements.add(DEFAULT_TOPIC);
-        } else {
-            if (mTopic != null && mTopic.length() > 0 ) {
-                elements.add(mTopic);
-            }
-        }
+
+        // Below is the original code - it adds the topic name in folder path.
+        // Removed it for UIP-4833 as messages will be written to multiple kafka topics per publisher.
+        // In our case, the messages should always be written to events folder irrespective of the actual topic for filecrusher to read the files properly.
+
+        /*if (mTopic != null && mTopic.length() > 0 ) {
+            elements.add(mTopic);
+        }*/
+
+        elements.add(DEFAULT_TOPIC);
+
         return StringUtils.join(elements, "/");
     }
 
@@ -174,6 +178,8 @@ public class LogFilePath {
 
     private String getLogFileBasename() {
         ArrayList<String> basenameElements = new ArrayList<String>();
+
+        //When messages are read from multiple topics, all messages are written in events folder. Added topic name to file name to avoid files being overwritten
         if (readFromMultipleTopics) {
             basenameElements.add(mTopic);
         }

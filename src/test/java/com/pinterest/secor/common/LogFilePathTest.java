@@ -28,18 +28,17 @@ import java.util.Arrays;
  */
 public class LogFilePathTest extends TestCase {
     private static final String   PREFIX                = "/some_parent_dir";
-    private static final String   TOPIC                 = "some_topic";
+    private static final String   DEFAULT_TOPIC         = "events";
     private static final String[] PARTITIONS            = {"some_partition", "some_other_partition"};
     private static final int      GENERATION            = 10;
     private static final int      KAFKA_PARTITION       = 0;
     private static final long     LAST_COMMITTED_OFFSET = 100;
     private static final String   PATH                  =
-        "/some_parent_dir/some_topic/some_partition/some_other_partition/" +
+        "/some_parent_dir/events/some_partition/some_other_partition/" +
         "10_0_00000000000000000100";
     private static final String   CRC_PATH              =
-            "/some_parent_dir/some_topic/some_partition/some_other_partition/" +
+            "/some_parent_dir/events/some_partition/some_other_partition/" +
             ".10_0_00000000000000000100.crc";
-    public static final  String   EVENTS                = "events";
     public static final String    DATEHOUR              = "2018-09-13T05:00:00+0000";
 
     private LogFilePath mLogFilePath;
@@ -48,12 +47,12 @@ public class LogFilePathTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         System.clearProperty("readFromMultipleTopics");
-        mLogFilePath = new LogFilePath(PREFIX, TOPIC, PARTITIONS, GENERATION, KAFKA_PARTITION,
+        mLogFilePath = new LogFilePath(PREFIX, DEFAULT_TOPIC, PARTITIONS, GENERATION, KAFKA_PARTITION,
                                        LAST_COMMITTED_OFFSET, "");
     }
 
     public void testConstructFromMessage() throws Exception {
-        ParsedMessage message = new ParsedMessage(TOPIC, KAFKA_PARTITION, 1000, null,
+        ParsedMessage message = new ParsedMessage(DEFAULT_TOPIC, KAFKA_PARTITION, 1000, null,
                                                   "some_payload".getBytes(), PARTITIONS);
         LogFilePath logFilePath = new LogFilePath(PREFIX, GENERATION, LAST_COMMITTED_OFFSET,
                                                   message, "");
@@ -64,7 +63,7 @@ public class LogFilePathTest extends TestCase {
         LogFilePath logFilePath = new LogFilePath("/some_parent_dir", PATH);
 
         assertEquals(PATH, logFilePath.getLogFilePath());
-        assertEquals(TOPIC, logFilePath.getTopic());
+        assertEquals(DEFAULT_TOPIC, logFilePath.getTopic());
         assertTrue(Arrays.equals(PARTITIONS, logFilePath.getPartitions()));
         assertEquals(GENERATION, logFilePath.getGeneration());
         assertEquals(KAFKA_PARTITION, logFilePath.getKafkaPartition());
@@ -72,7 +71,7 @@ public class LogFilePathTest extends TestCase {
     }
 
     public void testGetters() throws Exception {
-        assertEquals(TOPIC, mLogFilePath.getTopic());
+        assertEquals(DEFAULT_TOPIC, mLogFilePath.getTopic());
         assertTrue(Arrays.equals(PARTITIONS, mLogFilePath.getPartitions()));
         assertEquals(GENERATION, mLogFilePath.getGeneration());
         assertEquals(KAFKA_PARTITION, mLogFilePath.getKafkaPartition());
@@ -88,12 +87,12 @@ public class LogFilePathTest extends TestCase {
     }
 
     public void testGetLogFilePathForSingleEventTopic() {
-        String events_topic = EVENTS;
+        String events_topic = DEFAULT_TOPIC;
         String [] mPartitions = new String[]{ DATEHOUR };
         ParsedMessage message = new ParsedMessage(events_topic, KAFKA_PARTITION, LAST_COMMITTED_OFFSET, null, "some_payload".getBytes(), mPartitions);
         LogFilePath logFilePath = new LogFilePath(PREFIX, GENERATION, LAST_COMMITTED_OFFSET, message,
                                                   "");
-        String logFileDir = PREFIX + "/" + EVENTS + "/" + DATEHOUR + "/";
+        String logFileDir = PREFIX + "/" + DEFAULT_TOPIC + "/" + DATEHOUR + "/";
         String logFileName = GENERATION + "_" + KAFKA_PARTITION + "_" + "00000000000000000" + LAST_COMMITTED_OFFSET;
         String expectedFilePath = logFileDir + logFileName;
 
@@ -107,7 +106,7 @@ public class LogFilePathTest extends TestCase {
         System.setProperty("readFromMultipleTopics","true");
         LogFilePath logFilePath = new LogFilePath(PREFIX, GENERATION, LAST_COMMITTED_OFFSET, message,
                                                   "");
-        String logFileDir = PREFIX + "/" + EVENTS + "/" + DATEHOUR + "/";
+        String logFileDir = PREFIX + "/" + DEFAULT_TOPIC + "/" + DATEHOUR + "/";
         String logFileName = facebook_topic + "_"+ GENERATION + "_" + KAFKA_PARTITION + "_" + "00000000000000000" + LAST_COMMITTED_OFFSET;
         String expectedFilePath = logFileDir + logFileName;
 
